@@ -67,8 +67,10 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
-      "prettier --config ./.prettierrc --write -u",
-      "stylelint 'src/**/*.{js,ts,jsx,tsx}' --fix"
+      "prettier --config ./.prettierrc --write -u"
+    ],
+    "src/**/*.styles.{js,ts,jsx,tsx}": [
+      "stylelint --fix"
     ]
   }
 }
