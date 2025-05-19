@@ -3,6 +3,7 @@ import * as S from './BottomBar.styles';
 import DeleteIcon from '@/assets/icons/nrk_trash.svg?react';
 import CheckIcon from '@/assets/icons/nrk_check.svg?react';
 import useToast from '@/hooks/useToast';
+import { useWaitingStore } from '@/stores/useWaitingStore';
 
 export default function BottomBar({
   id,
@@ -12,13 +13,16 @@ export default function BottomBar({
   setSelectedIndex: () => void;
 }) {
   const { open } = useToast();
+  const deleteWaiting = useWaitingStore((state) => state.deleteWaiting);
 
-  const handleClick = (message: string) => {
+  if (!id) return null;
+
+  const handleClick = async (message: string) => {
+    await deleteWaiting(id);
     open(message, 3000, 'bootom-bar' + id);
-    console.log(message);
     setSelectedIndex();
   };
-  if (!id) return null;
+
   return (
     <AnimatePresence>
       {id && (
@@ -35,7 +39,7 @@ export default function BottomBar({
           variants={S.variants}
         >
           <S.TextSection>
-            <S.HeaderText>0000팀</S.HeaderText>
+            <S.HeaderText>{id}팀</S.HeaderText>
             <S.Text>선택</S.Text>
           </S.TextSection>
           <S.ButtonSection>

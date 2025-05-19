@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useModalStore } from '@/stores/useModalStore';
 import * as S from './WaitingModal.styles';
 import { useSearchParams } from 'react-router-dom';
+import { useWaitingStore } from '@/stores/useWaitingStore';
 
 const STEPS = ['people', 'phone', 'complete'] as const;
 
@@ -110,8 +111,17 @@ const PhoneStep = ({
 
 const CompleteStep = ({ people, phone }: { people: number; phone: string }) => {
   const clearModal = useModalStore((state) => state.clearModals);
+  const addWaiting = useWaitingStore((state) => state.addWaiting);
   const [, setSearchParams] = useSearchParams();
-  const handleClose = () => {
+  const handleClose = async () => {
+    await addWaiting({
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      waitingNum: Date.now(),
+      visitorCount: people,
+      phoneNumber: phone,
+      type: 'WalkIn',
+    });
     clearModal();
     setSearchParams({});
   };

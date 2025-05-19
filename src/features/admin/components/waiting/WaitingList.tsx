@@ -1,124 +1,74 @@
-import { WaitingType } from '@/features/admin/type/waiting.type';
+import { WaitingType } from '@/types/waiting.type';
 import * as S from './WaitingList.styles';
 import { AlarmButton, CallButton } from '@/components/button';
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useRef, useEffect } from 'react';
 import BottomBar from '@/features/admin/components/waiting/BottomBar';
-
-const waitings: WaitingType[] = [
-  {
-    id: 1,
-    name: 'John Doe',
-    phone: '123-456-7890',
-    status: {
-      people: 5,
-      time: '10:00 AM',
-    },
-    isAlert: false,
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    phone: '987-654-3210',
-    status: {
-      people: 3,
-      time: '10:15 AM',
-    },
-    isAlert: false,
-  },
-  {
-    id: 3,
-    name: 'Jane Smith',
-    phone: '987-654-3210',
-    status: {
-      people: 3,
-      time: '10:15 AM',
-    },
-    isAlert: false,
-  },
-  {
-    id: 4,
-    name: 'Jane Smith',
-    phone: '987-654-3210',
-    status: {
-      people: 3,
-      time: '10:15 AM',
-    },
-    isAlert: false,
-  },
-  {
-    id: 5,
-    name: 'Jane Smith',
-    phone: '987-654-3210',
-    status: {
-      people: 3,
-      time: '10:15 AM',
-    },
-    isAlert: false,
-  },
-];
+import { useWaitingStore } from '@/stores/useWaitingStore';
 
 export default function WaitingList() {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const waitings = useWaitingStore((state) => state.waitings);
   return (
     <S.Container>
       {waitings.map((waiting, index) => {
         return (
           <Fragment key={waiting.id}>
-            <WaitingListItem
-              key={waiting.id}
-              waiting={waiting}
-              isSelect={selectedIndex === index}
-              onClick={() => setSelectedIndex((prev) => (prev === index ? null : index))}
-            />
+            <WaitingListItem key={waiting.id} waiting={waiting} />
             {index != 1 && index != waitings.length - 1 && <S.HorizontalLine />}
             {index === 1 && <S.BorderLine />}
           </Fragment>
         );
       })}
       <S.BottomPadding />
-      {selectedIndex != null && (
-        <BottomBar id={selectedIndex} setSelectedIndex={() => setSelectedIndex(null)} />
-      )}
     </S.Container>
   );
 }
 
-function WaitingListItem({
-  waiting,
-  isSelect = false,
-  onClick = () => {},
-}: {
-  waiting: WaitingType;
-  isSelect: boolean;
-  onClick: () => void;
-}) {
+function WaitingListItem({ waiting }: { waiting: WaitingType }) {
+  const [cliked, setCliked] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!cliked) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (itemRef.current && !itemRef.current.contains(e.target as Node)) {
+        setCliked(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [cliked]);
   return (
-    <S.ListItemContainer>
-      <S.ListItem onClick={onClick} $isSelect={isSelect} whileTap={{ scale: 0.97 }}>
+    <S.ListItemContainer onClick={() => setCliked((prev) => !prev)} ref={itemRef}>
+      <S.ListItem $isSelect={cliked} whileTap={{ scale: 0.97 }}>
         <S.TextSection>
           <S.TextFrame $gap="0.12rem">
             <S.TextFrame $gap="0.12rem">
-              <S.HeaderText $isBold {...(isSelect ? { $isBlue: true } : {})}>
-                000{waiting.id}
+              <S.HeaderText $isBold {...(cliked ? { $isBlue: true } : {})}>
+                {waiting.id}
               </S.HeaderText>
-              <S.HeaderText {...(isSelect ? { $isBlue: true } : { $isGray: true })}>
-                님
-              </S.HeaderText>
+              <S.HeaderText {...(cliked ? { $isBlue: true } : { $isGray: true })}>님</S.HeaderText>
             </S.TextFrame>
-            <S.HeaderText {...(isSelect ? { $isBlue: true } : { $isGray: true })}>
-              ({waiting.phone.slice(-4)})
+            <S.HeaderText {...(cliked ? { $isBlue: true } : { $isGray: true })}>
+              ({waiting.phoneNumber})
             </S.HeaderText>
           </S.TextFrame>
           <S.TextFrame $gap="0.13rem">
-            <S.Text $isBold>{waiting.status.people}명 / 35분</S.Text>
+            <S.Text $isBold>{waiting.visitorCount}명 / 35분</S.Text>
             <S.Text>대기 중</S.Text>
           </S.TextFrame>
         </S.TextSection>
         <S.ButtonSection>
-          <AlarmButton id={waiting.id} isStopPropagation={isSelect} />
-          <CallButton tel={waiting.phone} isStopPropagation={isSelect} />
+          <AlarmButton
+            id={waiting.id}
+            isStopPropagation={cliked}
+            disabled={waiting.type === 'WalkIn'}
+          />
+          <CallButton tel={waiting.phoneNumber} isStopPropagation={cliked} />
         </S.ButtonSection>
       </S.ListItem>
+      {cliked && <BottomBar id={waiting.id} setSelectedIndex={() => setCliked(false)} />}
     </S.ListItemContainer>
   );
 }

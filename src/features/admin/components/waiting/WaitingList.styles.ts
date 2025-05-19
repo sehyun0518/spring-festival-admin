@@ -26,6 +26,10 @@ export const TextSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.12rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const ButtonSection = styled.div`
