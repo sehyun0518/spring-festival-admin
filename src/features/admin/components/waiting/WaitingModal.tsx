@@ -5,6 +5,7 @@ import { useModalStore } from '@/stores/useModalStore';
 import * as S from './WaitingModal.styles';
 import { useSearchParams } from 'react-router-dom';
 import { useWaitingStore } from '@/stores/useWaitingStore';
+import { postWaiting } from '@/features/admin/services/waiting';
 
 const STEPS = ['people', 'phone', 'complete'] as const;
 
@@ -114,8 +115,10 @@ const CompleteStep = ({ people, phone }: { people: number; phone: string }) => {
   const addWaiting = useWaitingStore((state) => state.addWaiting);
   const [, setSearchParams] = useSearchParams();
   const handleClose = async () => {
+    const response = await postWaiting({ visitorCount: people, phoneNumber: phone });
+
     await addWaiting({
-      id: Date.now(),
+      id: response.data.id ? response.data.id : Date.now(),
       createdAt: new Date().toISOString(),
       waitingNum: Date.now(),
       visitorCount: people,

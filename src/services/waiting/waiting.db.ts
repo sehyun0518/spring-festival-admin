@@ -9,9 +9,9 @@ interface WaitingDB extends DBSchema {
   };
 }
 
-export const waitingDB = openDB<WaitingDB>('admin-waiting-db', 1, {
+export const waitingDB = openDB<WaitingDB>('admin-db', 2, {
   upgrade(db) {
-    const waitingStore = db.createObjectStore('waiting', { keyPath: 'id' });
+    const waitingStore = db.createObjectStore('waiting', { keyPath: 'waitingNum' });
     waitingStore.createIndex('by-waitingNum', 'waitingNum');
   },
 });

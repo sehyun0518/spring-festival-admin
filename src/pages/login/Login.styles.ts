@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { motion } from "framer-motion";
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 export const Container = styled.div`
   height: 100%;
   display: flex;
@@ -26,10 +26,10 @@ export const Text = styled.span`
 `;
 
 export const ButtonSection = styled.div`
-    width: 100%;
-    height: 7.5rem;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  height: 7.5rem;
+  display: flex;
+  justify-content: center;
 `;
 
 export const Button = styled(motion.button)`
@@ -42,7 +42,10 @@ export const Button = styled(motion.button)`
   background-color: ${(props) => props.theme.colors.primary.bl400};
   color: ${(props) => props.theme.colors.grayScale.white};
   ${(props) => props.theme.fonts.body.medium500};
-
   border: none;
   border-radius: 0.75rem;
+
+  &:disabled {
+    background-color: ${(props) => props.theme.colors.grayScale.gy700};
+  }
 `;

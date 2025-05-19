@@ -11,8 +11,8 @@ export default function WaitingList() {
     <S.Container>
       {waitings.map((waiting, index) => {
         return (
-          <Fragment key={waiting.id}>
-            <WaitingListItem key={waiting.id} waiting={waiting} />
+          <Fragment key={waiting.waitingNum}>
+            <WaitingListItem key={waiting.waitingNum} waiting={waiting} />
             {index != 1 && index != waitings.length - 1 && <S.HorizontalLine />}
             {index === 1 && <S.BorderLine />}
           </Fragment>
@@ -68,7 +68,14 @@ function WaitingListItem({ waiting }: { waiting: WaitingType }) {
           <CallButton tel={waiting.phoneNumber} isStopPropagation={cliked} />
         </S.ButtonSection>
       </S.ListItem>
-      {cliked && <BottomBar id={waiting.id} setSelectedIndex={() => setCliked(false)} />}
+      {cliked && (
+        <BottomBar
+          id={waiting.id}
+          type={waiting.type}
+          setSelectedIndex={() => setCliked(false)}
+          waitingNum={waiting.waitingNum}
+        />
+      )}
     </S.ListItemContainer>
   );
 }
