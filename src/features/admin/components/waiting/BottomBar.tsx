@@ -23,15 +23,29 @@ export default function BottomBar({
   if (!id) return null;
 
   const handleNoShow = async (message: string) => {
-    await deleteWaiting(waitingNum);
-    await noShowWaiting(id, type);
-    open(message, 3000, 'bootom-bar' + id);
+    try {
+      const response = await noShowWaiting(id, type);
+      if (response.status === 200) {
+        open(message, 3000, 'bootom-bar' + id);
+        await deleteWaiting(waitingNum);
+      }
+    } catch {
+      open('노쇼/삭제 처리에 실패했어요', 3000, 'bootom-bar-error-no-show' + id);
+    }
     setSelectedIndex();
   };
+
   const handleComplete = async (message: string) => {
-    await deleteWaiting(waitingNum);
-    await completeWaiting(id, type);
-    open(message, 3000, 'bootom-bar' + id);
+    try {
+      const response = await completeWaiting(id, type);
+      if (response.status === 200) {
+        open(message, 3000, 'bootom-bar' + id);
+        await deleteWaiting(waitingNum);
+      }
+    } catch {
+      open('입장 완료 처리에 실패했어요', 3000, 'bootom-bar-error-complete' + id);
+    }
+
     setSelectedIndex();
   };
   return (

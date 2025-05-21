@@ -1,9 +1,17 @@
 import { postAlarm } from '@/features/admin/services/waiting';
 import * as S from './AlarmModal.styles';
+import useToast from '@/hooks/useToast';
 
 export default function AlarmModal({ id, closeModal }: { id: number; closeModal: () => void }) {
+  const { open } = useToast();
   const handleClick = async () => {
-    await postAlarm(id);
+    try {
+      await postAlarm(id);
+      open('입장 알림을 전송했어요', 3000, 'alarm');
+    } catch {
+      await closeModal();
+      open('입장 알림 전송에 실패했어요', 3000, 'alarm-error');
+    }
     closeModal();
   };
   return (
