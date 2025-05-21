@@ -1,3 +1,4 @@
+import { BOOTH_ID_NAME_LIST } from '@/constants/booth';
 import axiosInstance from '@/services/axios';
 
 export const getWaitings = async () => {
@@ -37,9 +38,11 @@ export const completeWaiting = async (id: number, type: string) => {
 };
 
 export const postAlarm = async (id: number) => {
+  const booth = BOOTH_ID_NAME_LIST.find((booth) => booth.id === id);
   const response = await axiosInstance.post('/waiting/alarm', {
     waitingId: id,
     type: 'Online',
+    pubName: booth?.name,
   });
   return response;
 };
