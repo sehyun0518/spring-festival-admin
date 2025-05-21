@@ -18,7 +18,6 @@ export const useWaitingStore = create<WaitingStore>((set) => ({
     const response = await getWaitings();
     if (response.status === 200) {
       const waitings = response.data;
-      console.log(waitings);
       response.data.forEach((waiting: WaitingType) => {
         putGuestWaiting(waiting);
       });

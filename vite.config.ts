@@ -45,9 +45,9 @@ export default defineConfig({
       },
 
       manifest: {
-        name: 'likelion-spring-admin',
-        short_name: 'likelion-spring-admin',
-        description: 'HYU-ERICA 2025 spring festival application',
+        name: 'ESPERO: HYLIGHT ADMIN 2025',
+        short_name: 'ESPERO: HYLIGHT ADMIN',
+        description: 'HYU-ERICA 2025 spring festival application for booth management',
         theme_color: '#17171B',
         background_color: '#17171B',
         start_url: '.',

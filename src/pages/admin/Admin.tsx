@@ -11,13 +11,13 @@ export default function Admin() {
   const isLoggingIn = useAuthStore((state) => state.isLoggedIn);
   useEffect(() => {
     fetchWaitings();
-    const response = getWaitings();
-    console.log(response);
+    getWaitings();
   }, [fetchWaitings]);
 
   if (!isLoggingIn) {
     window.location.href = '/';
   }
+
   return (
     <S.Container>
       <NavBar isBack title="웨이팅 관리" backPath={'/'} />

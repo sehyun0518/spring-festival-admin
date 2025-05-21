@@ -5,6 +5,7 @@ import LogoIcon from '@/assets/icons/Logo_Sample.svg?react';
 
 import { NavBarProps, SearchNavBarProps } from './NavBar.types';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '@/features/login/services/logout';
 
 /**
  * NavBar 컴포넌트
@@ -30,9 +31,8 @@ const NavBar: React.FC<NavBarProps> = ({
   const navigate = useNavigate();
 
   const handleBack = () => {
-    if (typeof backPath === 'number') {
-      navigate(backPath);
-    } else if (typeof backPath === 'string') {
+    if (backPath === '/') {
+      logout();
       navigate(backPath);
     } else {
       navigate(-1);

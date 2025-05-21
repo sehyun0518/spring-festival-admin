@@ -35,3 +35,11 @@ export const completeWaiting = async (id: number, type: string) => {
   });
   return response;
 };
+
+export const postAlarm = async (id: number) => {
+  const response = await axiosInstance.post('/waiting/alarm', {
+    waitingId: id,
+    type: 'Online',
+  });
+  return response;
+};

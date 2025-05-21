@@ -4,6 +4,8 @@ import { AlarmButton, CallButton } from '@/components/button';
 import { useState, Fragment, useRef, useEffect } from 'react';
 import BottomBar from '@/features/admin/components/waiting/BottomBar';
 import { useWaitingStore } from '@/stores/useWaitingStore';
+import { textZeroFill } from '@/utils/text';
+import { getMinuteDiff } from '@/utils/day';
 
 export default function WaitingList() {
   const waitings = useWaitingStore((state) => state.waitings);
@@ -46,16 +48,18 @@ function WaitingListItem({ waiting }: { waiting: WaitingType }) {
           <S.TextFrame $gap="0.12rem">
             <S.TextFrame $gap="0.12rem">
               <S.HeaderText $isBold {...(cliked ? { $isBlue: true } : {})}>
-                {waiting.id}
+                {textZeroFill(String(waiting.waitingNum), 4)}
               </S.HeaderText>
               <S.HeaderText {...(cliked ? { $isBlue: true } : { $isGray: true })}>님</S.HeaderText>
             </S.TextFrame>
             <S.HeaderText {...(cliked ? { $isBlue: true } : { $isGray: true })}>
-              ({waiting.phoneNumber})
+              ({waiting.phoneNumber.slice(-4)})
             </S.HeaderText>
           </S.TextFrame>
           <S.TextFrame $gap="0.13rem">
-            <S.Text $isBold>{waiting.visitorCount}명 / 35분</S.Text>
+            <S.Text $isBold>
+              {waiting.visitorCount}명 / {getMinuteDiff(waiting.createdAt, new Date())}분
+            </S.Text>
             <S.Text>대기 중</S.Text>
           </S.TextFrame>
         </S.TextSection>
@@ -65,7 +69,11 @@ function WaitingListItem({ waiting }: { waiting: WaitingType }) {
             isStopPropagation={cliked}
             disabled={waiting.type === 'WalkIn'}
           />
-          <CallButton tel={waiting.phoneNumber} isStopPropagation={cliked} />
+          <CallButton
+            tel={waiting.phoneNumber}
+            isStopPropagation={cliked}
+            num={String(waiting.waitingNum)}
+          />
         </S.ButtonSection>
       </S.ListItem>
       {cliked && (

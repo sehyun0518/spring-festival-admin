@@ -20,3 +20,8 @@ export const deleteWaiting = async (id: number) => {
   const store = await init();
   return store.delete(id);
 };
+
+export const clearWaiting = async () => {
+  const store = await init();
+  return store.clear();
+};

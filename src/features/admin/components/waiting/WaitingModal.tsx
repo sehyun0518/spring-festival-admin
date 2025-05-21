@@ -12,12 +12,14 @@ const STEPS = ['people', 'phone', 'complete'] as const;
 type WaitingForm = {
   people: number;
   phone: string;
+  waitingNum: number;
 };
 
 export default function WaitingModal() {
   const [waitingForm, setWaitingForm] = useState<WaitingForm>({
     people: 0,
     phone: '',
+    waitingNum: 0,
   });
   const { Funnel, setStep } = useFunnel(STEPS);
 
@@ -30,7 +32,11 @@ export default function WaitingModal() {
         <PhoneStep waitingForm={waitingForm} setWaitingForm={setWaitingForm} setStep={setStep} />
       </Funnel.Step>
       <Funnel.Step name={STEPS[2]}>
-        <CompleteStep people={waitingForm.people} phone={waitingForm.phone} />
+        <CompleteStep
+          people={waitingForm.people}
+          phone={waitingForm.phone}
+          waitingNum={waitingForm.waitingNum}
+        />
       </Funnel.Step>
     </Funnel>
   );
@@ -45,7 +51,7 @@ const PeopleStep = ({
 }) => {
   const [currentPeople, setCurrentPeople] = useState(0);
   const handleNext = () => {
-    setWaitingForm({ people: currentPeople, phone: '' });
+    setWaitingForm({ people: currentPeople, phone: '', waitingNum: 0 });
     setStep(STEPS[1]);
   };
   return (
@@ -73,8 +79,27 @@ const PhoneStep = ({
   setWaitingForm: (value: WaitingForm) => void;
 }) => {
   const [currentPhone, setCurrentPhone] = useState('');
-  const handleNext = () => {
-    setWaitingForm({ people: waitingForm.people, phone: currentPhone });
+  const addWaiting = useWaitingStore((state) => state.addWaiting);
+
+  const handleNext = async () => {
+    const response = await postWaiting({
+      visitorCount: waitingForm.people,
+      phoneNumber: currentPhone,
+    });
+
+    await addWaiting({
+      id: response.data.id ? response.data.id : Date.now(),
+      createdAt: new Date().toISOString(),
+      waitingNum: response.data.waitingNum ? response.data.waitingNum : Date.now(),
+      visitorCount: waitingForm.people,
+      phoneNumber: currentPhone,
+      type: 'WalkIn',
+    });
+    setWaitingForm({
+      people: waitingForm.people,
+      phone: currentPhone,
+      waitingNum: response.data.waitingNum ? response.data.waitingNum : 0,
+    });
     setStep(STEPS[2]);
   };
 
@@ -110,21 +135,19 @@ const PhoneStep = ({
   );
 };
 
-const CompleteStep = ({ people, phone }: { people: number; phone: string }) => {
+const CompleteStep = ({
+  people,
+  phone,
+  waitingNum,
+}: {
+  people: number;
+  phone: string;
+  waitingNum: number;
+}) => {
   const clearModal = useModalStore((state) => state.clearModals);
-  const addWaiting = useWaitingStore((state) => state.addWaiting);
-  const [, setSearchParams] = useSearchParams();
-  const handleClose = async () => {
-    const response = await postWaiting({ visitorCount: people, phoneNumber: phone });
 
-    await addWaiting({
-      id: response.data.id ? response.data.id : Date.now(),
-      createdAt: new Date().toISOString(),
-      waitingNum: Date.now(),
-      visitorCount: people,
-      phoneNumber: phone,
-      type: 'WalkIn',
-    });
+  const [, setSearchParams] = useSearchParams();
+  const handleClose = () => {
     clearModal();
     setSearchParams({});
   };
@@ -132,7 +155,7 @@ const CompleteStep = ({ people, phone }: { people: number; phone: string }) => {
     <S.Container animate={{ opacity: 1 }} initial={{ opacity: 0 }} exit={{ opacity: 0 }}>
       <S.MediumText>완료! 웨이팅이 추가됐어요.</S.MediumText>
       <S.GraySection>
-        <S.SmallText>번호: {people}번</S.SmallText>
+        <S.SmallText>번호: {waitingNum}번</S.SmallText>
         <S.SmallText>방문 인원: {people}명</S.SmallText>
         <S.SmallText>{phone}</S.SmallText>
       </S.GraySection>
