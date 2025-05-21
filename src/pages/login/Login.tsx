@@ -10,23 +10,29 @@ export default function Login() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-
+  const [isError, setIsError] = useState(false);
   const handleLogin = async () => {
-    const response = await login(userName, password);
-    if (response.status !== 200) {
-      return;
+    try {
+      const response = await login(userName, password);
+
+      const accessToken = response.headers['authorization']?.replace('Bearer ', '');
+      if (accessToken) {
+        localStorage.setItem('access_token', accessToken);
+        useAuthStore.getState().setIsLoggedIn(true);
+      } else {
+        console.error('access token 없음');
+      }
+
+      useAuthStore
+        .getState()
+        .setUserId(BOOTH_ID_NAME_LIST.find((booth) => booth.name === userName)?.id || 0);
+
+      setIsError(false); // 로그인 성공 시 에러 초기화
+      navigate('/admin');
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      setIsError(true); // 에러 발생 시 표시
     }
-    const accessToken = response.headers['authorization']?.replace('Bearer ', '');
-    if (accessToken) {
-      localStorage.setItem('access_token', accessToken);
-      useAuthStore.getState().setIsLoggedIn(true); // 전역 상태 갱신
-    } else {
-      console.error('access token 없음');
-    }
-    useAuthStore
-      .getState()
-      .setUserId(BOOTH_ID_NAME_LIST.find((booth) => booth.name === userName)?.id || 0);
-    navigate('/admin');
   };
 
   return (
@@ -39,7 +45,12 @@ export default function Login() {
         </S.Label>
         <S.Label>
           <S.Text>관리자 코드</S.Text>
-          <Password password={password} setPassword={setPassword} />
+          <Password
+            password={password}
+            setPassword={setPassword}
+            isError={isError}
+            setIsError={setIsError}
+          />
         </S.Label>
       </S.LabelSection>
       <S.ButtonSection>

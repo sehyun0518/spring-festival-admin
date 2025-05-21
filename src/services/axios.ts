@@ -1,3 +1,4 @@
+import { logout } from '@/features/login/services/logout';
 import axios from 'axios';
 
 const axiosInstance = axios.create({
@@ -29,7 +30,7 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     // access token 만료 시도 감지
-    if (error.response?.status === 403) {
+    if (error.response?.status === 406 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const refreshResponse = await axiosInstance.post('/auth/refresh');
@@ -42,8 +43,7 @@ axiosInstance.interceptors.response.use(
         }
       } catch (refreshError) {
         console.error('토큰 갱신 실패', refreshError);
-        localStorage.removeItem('access_token');
-        window.location.href = '/login';
+        await logout();
       }
     }
 
