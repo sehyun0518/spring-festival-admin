@@ -1,6 +1,6 @@
 export const BOOTH_ID_NAME_LIST = [
-  { id: 1, name: '차린건 여정도 지만' },
-  { id: 2, name: '폭싹 취EE했수다' },
+  { id: 1, name: '나 지피틴데 안 추ㅣㅎㅆ다' },
+  { id: 2, name: '차린건 여정도 지만' },
   { id: 3, name: '나는 술로' },
   { id: 4, name: '에바레스트 산악회' },
   { id: 5, name: '그 시절 우리가 사랑했던 수사' },
@@ -15,7 +15,7 @@ export const BOOTH_ID_NAME_LIST = [
   { id: 14, name: '13주차 술체역학' },
   { id: 15, name: '냉3 4먹으러 5것지' },
   { id: 16, name: '그시절 캔마하(CANMAHA)' },
-  { id: 17, name: '나 지피틴데 안 추ㅣㅎㅆ다' },
+  { id: 17, name: '폭싹 취EE했수다' },
   { id: 18, name: '폭주어선' },
   { id: 19, name: '닭치고 한 잔' },
   { id: 20, name: '모여봐요 술꾼의 숲' },
