@@ -22,6 +22,7 @@ export default function AlarmButton({
 }: AlarmButtonProps) {
   const AlarmContent = AlarmModal as React.ComponentType<{
     title: string;
+    id: number;
     closeModal: () => void;
   }>;
   const { open, close } = useModal(AlarmContent);
@@ -34,7 +35,7 @@ export default function AlarmButton({
       e.stopPropagation();
       return;
     }
-    open({ title: '입장 알림 보내기', closeModal: close });
+    open({ title: '입장 알림 보내기', closeModal: close, id });
   };
   return (
     <S.Container

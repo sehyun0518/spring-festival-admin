@@ -37,8 +37,8 @@ export const completeWaiting = async (id: number, type: string) => {
   return response;
 };
 
-export const postAlarm = async (id: number) => {
-  const booth = BOOTH_ID_NAME_LIST.find((booth) => booth.id === id);
+export const postAlarm = async (id: number, boothId: number) => {
+  const booth = BOOTH_ID_NAME_LIST.find((booth) => booth.id === boothId);
   const response = await axiosInstance.post('/waiting/alarm', {
     waitingId: id,
     type: 'Online',

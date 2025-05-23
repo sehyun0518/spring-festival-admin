@@ -3,12 +3,12 @@ import * as S from './AlarmModal.styles';
 import useToast from '@/hooks/useToast';
 import { useAuthStore } from '@/features/login/stores/useAuthStore';
 
-export default function AlarmModal({ closeModal }: { closeModal: () => void }) {
+export default function AlarmModal({ id, closeModal }: { id: number; closeModal: () => void }) {
+  const booth_id = useAuthStore((state) => state.userId);
   const { open } = useToast();
-  const id = useAuthStore((state) => state.userId);
   const handleClick = async () => {
     try {
-      await postAlarm(id);
+      await postAlarm(id, booth_id);
       open('입장 알림을 전송했어요', 3000, 'alarm');
     } catch {
       await closeModal();
