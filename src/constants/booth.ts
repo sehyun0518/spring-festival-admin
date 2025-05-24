@@ -21,7 +21,7 @@ export const BOOTH_ID_NAME_LIST = [
   { id: 20, name: '모여봐요 술꾼의 숲' },
   { id: 21, name: "이랏'스융'마세" },
   { id: 22, name: '홍문으로들었소' },
-  { id: 23, name: '디대는 못말려! - 오늘도 과제는 ...' },
+  { id: 23, name: '디대는 못말려! 오늘도 과제는' },
   { id: 24, name: '응답하라 일구구산' },
   { id: 25, name: '뭉쳐야 예체대' },
   { id: 26, name: 'semi azit' },

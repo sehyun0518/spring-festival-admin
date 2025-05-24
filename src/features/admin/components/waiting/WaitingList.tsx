@@ -1,6 +1,6 @@
 import { WaitingType } from '@/types/waiting.type';
 import * as S from './WaitingList.styles';
-import { AlarmButton, CallButton } from '@/components/button';
+import { CallButton } from '@/components/button';
 import { useState, Fragment, useRef, useEffect } from 'react';
 import BottomBar from '@/features/admin/components/waiting/BottomBar';
 import { useWaitingStore } from '@/stores/useWaitingStore';
@@ -64,11 +64,6 @@ function WaitingListItem({ waiting }: { waiting: WaitingType }) {
           </S.TextFrame>
         </S.TextSection>
         <S.ButtonSection>
-          <AlarmButton
-            id={waiting.id}
-            isStopPropagation={cliked}
-            disabled={waiting.type === 'WalkIn'}
-          />
           <CallButton
             tel={waiting.phoneNumber}
             isStopPropagation={cliked}
