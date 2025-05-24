@@ -56,11 +56,10 @@ const PeopleStep = ({
   };
   return (
     <S.Container animate={{ opacity: 1 }} initial={{ opacity: 0 }} exit={{ opacity: 0 }}>
-      <S.MediumText>오실 인원을 입력해 주세요!</S.MediumText>
+      <S.MediumText>손님의 인원 수를 입력해 주세요!</S.MediumText>
       <InputStepper value={currentPeople} setValue={setCurrentPeople} />
       <S.SmallTextFrame>
-        <S.SmallText>웨이팅 남용을 방지하기 위해 동시 웨이팅 횟수는</S.SmallText>
-        <S.SmallText>최대 3회까지 가능합니다.</S.SmallText>
+        <S.SmallText>현장 웨이팅 최대 인원은 12명입니다.</S.SmallText>
       </S.SmallTextFrame>
       <S.Button disabled={currentPeople === 0} onClick={handleNext}>
         다음으로
@@ -125,8 +124,7 @@ const PhoneStep = ({
         placeholder="010-0000-0000"
       />
       <S.SmallTextFrame>
-        <S.SmallText>현장 웨이팅 대기자에게는</S.SmallText>
-        <S.SmallText>알림 기능이 제공되지 않습니다.</S.SmallText>
+        <S.SmallText>정확한 전화번호가 맞는지 확인해주세요.</S.SmallText>
       </S.SmallTextFrame>
       <S.Button disabled={currentPhone.length !== 13} onClick={handleNext}>
         등록하기
@@ -155,13 +153,21 @@ const CompleteStep = ({
     <S.Container animate={{ opacity: 1 }} initial={{ opacity: 0 }} exit={{ opacity: 0 }}>
       <S.MediumText>완료! 웨이팅이 추가됐어요.</S.MediumText>
       <S.GraySection>
-        <S.SmallText>번호: {waitingNum}번</S.SmallText>
-        <S.SmallText>방문 인원: {people}명</S.SmallText>
-        <S.SmallText>{phone}</S.SmallText>
+        <S.TextFrame>
+          <S.NumText>번호</S.NumText>
+          <S.SmallText>{String(waitingNum).padStart(4, '0')}번</S.SmallText>
+        </S.TextFrame>
+        <S.TextFrame>
+          <S.NumText>방문 인원</S.NumText>
+          <S.SmallText>{people}명</S.SmallText>
+        </S.TextFrame>
+        <S.TextFrame>
+          <S.PhoneNum>{phone}</S.PhoneNum>
+        </S.TextFrame>
       </S.GraySection>
       <S.SmallTextFrame>
-        <S.SmallText>현장 웨이팅 대기자에게는</S.SmallText>
-        <S.SmallText>알림 기능이 제공되지 않습니다.</S.SmallText>
+        <S.SmallText>입장 순서가 되면 ‘전화 걸기’를 통해</S.SmallText>
+        <S.SmallText>입장 안내를 도와주세요.</S.SmallText>
       </S.SmallTextFrame>
       <S.Button onClick={handleClose}>확인</S.Button>
     </S.Container>

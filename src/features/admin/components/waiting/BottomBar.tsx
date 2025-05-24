@@ -6,85 +6,62 @@ import useToast from '@/hooks/useToast';
 import { useWaitingStore } from '@/stores/useWaitingStore';
 import { completeWaiting, noShowWaiting } from '@/features/admin/services/waiting';
 import { textZeroFill } from '@/utils/text';
+
 export default function BottomBar({
-  id,
-  type,
-  waitingNum,
-  setSelectedIndex,
+  openItems,
+  setOpenItems,
 }: {
-  id: number;
-  type: string;
-  waitingNum: number;
-  setSelectedIndex: () => void;
+  openItems: Map<number, number>;
+  setOpenItems: (next: Map<number, number>) => void;
 }) {
   const { open } = useToast();
   const deleteWaiting = useWaitingStore((state) => state.deleteWaiting);
+  const selectedEntries = [...openItems.entries()];
 
-  if (!id) return null;
-
-  const handleNoShow = async (message: string) => {
-    try {
-      const response = await noShowWaiting(id, type);
-      if (response.status === 200) {
-        open(message, 3000, 'bootom-bar' + id);
-        await deleteWaiting(waitingNum);
+  if (selectedEntries.length === 0) return null;
+  const handleBulkAction = async (type: 'complete' | 'noShow') => {
+    for (const [id, waitingNum] of selectedEntries) {
+      try {
+        const api = type === 'complete' ? completeWaiting : noShowWaiting;
+        const response = await api(id, 'WalkIn');
+        if (response.status === 200) {
+          await deleteWaiting(waitingNum);
+        }
+      } catch {
+        open(`${textZeroFill(String(waitingNum), 4)} 처리 실패`, 3000, `bottom-bar-error-${id}`);
       }
-    } catch {
-      open('노쇼/삭제 처리에 실패했어요', 3000, 'bootom-bar-error-no-show' + id);
     }
-    setSelectedIndex();
+    const text =
+      type === 'complete' ? '입장 완료 처리가 완료됐어요' : '노쇼/삭제 처리가 완료됐어요';
+    open(text, 3000, `bottom-bar-${type}`);
+    setOpenItems(new Map());
   };
 
-  const handleComplete = async (message: string) => {
-    try {
-      const response = await completeWaiting(id, type);
-      if (response.status === 200) {
-        open(message, 3000, 'bootom-bar' + id);
-        await deleteWaiting(waitingNum);
-      }
-    } catch {
-      open('입장 완료 처리에 실패했어요', 3000, 'bootom-bar-error-complete' + id);
-    }
-
-    setSelectedIndex();
-  };
   return (
     <AnimatePresence>
-      {id && (
-        <S.Container
-          key="bottom-bar"
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={{
-            type: 'spring',
-            stiffness: 300,
-            damping: 30,
-          }}
-          variants={S.variants}
-        >
-          <S.TextSection>
-            <S.HeaderText>{textZeroFill(String(waitingNum), 4)}님</S.HeaderText>
-            <S.Text>선택</S.Text>
-          </S.TextSection>
-          <S.ButtonSection>
-            <S.Button
-              whileTap={{ scale: 0.97, backgroundColor: '#212526' }}
-              onClick={handleNoShow.bind(null, '노쇼/삭제 처리가 완료됐어요')}
-            >
-              <DeleteIcon width={'1.5rem'} height={'1.5rem'} />
-              <S.ButtonText>노쇼/삭제</S.ButtonText>
-            </S.Button>
-            <S.Button
-              whileTap={{ scale: 0.97, backgroundColor: '#212526' }}
-              onClick={handleComplete.bind(null, '입장 완료 처리가 완료됐어요')}
-            >
-              <CheckIcon width={'1.5rem'} height={'1.5rem'} />
-              <S.ButtonText>입장 완료</S.ButtonText>
-            </S.Button>
-          </S.ButtonSection>
-        </S.Container>
-      )}
+      <S.Container
+        key="bottom-bar"
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        variants={S.variants}
+      >
+        <S.TextSection>
+          <S.HeaderText>{textZeroFill(String(selectedEntries.length), 4)}명</S.HeaderText>
+          <S.Text>선택</S.Text>
+        </S.TextSection>
+        <S.ButtonSection>
+          <S.Button whileTap={{ scale: 0.97 }} onClick={() => handleBulkAction('noShow')}>
+            <DeleteIcon width={'1.5rem'} height={'1.5rem'} />
+            <S.ButtonText>삭제</S.ButtonText>
+          </S.Button>
+          <S.Button whileTap={{ scale: 0.97 }} onClick={() => handleBulkAction('complete')}>
+            <CheckIcon width={'1.5rem'} height={'1.5rem'} />
+            <S.ButtonText>입장 완료</S.ButtonText>
+          </S.Button>
+        </S.ButtonSection>
+      </S.Container>
     </AnimatePresence>
   );
 }

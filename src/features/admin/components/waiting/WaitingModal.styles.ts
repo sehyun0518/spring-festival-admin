@@ -18,7 +18,23 @@ export const MediumText = styled(Text)`
 `;
 
 export const SmallText = styled(Text)`
+  ${(props) => props.theme.fonts.body.medium500};
+`;
+
+export const TextFrame = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+export const NumText = styled.span`
   ${(props) => props.theme.fonts.body.small400};
+  color: ${(props) => props.theme.colors.grayScale.gy400};
+`;
+
+export const PhoneNum = styled.span`
+  ${(props) => props.theme.fonts.body.medium400};
+  color: ${(props) => props.theme.colors.grayScale.gy200};
 `;
 
 export const SmallTextFrame = styled.div`

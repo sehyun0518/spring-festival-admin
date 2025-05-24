@@ -1,6 +1,6 @@
 import { NavBar } from '@/components/nav-bar';
 import * as S from './Admin.styles';
-import { Button, Help, Info, WaitingList } from '@/features/admin';
+import { Button, Info, WaitingList } from '@/features/admin';
 import { useWaitingStore } from '@/stores/useWaitingStore';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/features/login/stores/useAuthStore';
@@ -25,7 +25,7 @@ export default function Admin() {
         <Info />
         <Button />
       </S.Wrapper>
-      <Help />
+      {/*<Help />*/}
       <WaitingList />
     </S.Container>
   );
